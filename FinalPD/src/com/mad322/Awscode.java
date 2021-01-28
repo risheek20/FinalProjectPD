@@ -285,7 +285,60 @@ import com.mad322.*;
 			return Response.status(200).entity(mainObj.toString()).build();
 
 		}
-		
+		@POST
+		@Path("/createBu")
+		@Consumes(MediaType.APPLICATION_JSON)
+		@Produces(MediaType.APPLICATION_JSON)
+		public Response createbus(Business bu) {
+			MysqlCon connection = new MysqlCon();
+
+			con = connection.getConnection();
+
+			try {
+
+
+
+				String query = "INSERT INTO `midterm`.`business`(`incorp_date,name, state_id,cust_id`)"
+						+ "VALUES(?,?,?,?)";
+
+				preparedStatement = con.prepareStatement(query);
+
+
+				preparedStatement.setString(1,bu.getIncorp_date());
+				preparedStatement.setString(2,bu.getName());
+				preparedStatement.setString(3, bu.getState_id());
+				preparedStatement.setInt(4, bu.getCust_id());
+
+
+				int rowCount = preparedStatement.executeUpdate();
+
+				if (rowCount > 0) {
+					System.out.println("Record inserted Successfully! : " + rowCount);
+
+					mainObj.accumulate("Status", 201);
+					mainObj.accumulate("Message", "Record Successfully added!");
+				} else {
+					mainObj.accumulate("Status", 500);
+					mainObj.accumulate("Message", "Something went wrong!");
+				}
+
+			} catch (SQLException e) {
+
+				mainObj.accumulate("Status", 500);
+				mainObj.accumulate("Message", e.getMessage());
+			} finally {
+				try {
+					con.close();
+					preparedStatement.close();
+				} catch (SQLException e) {
+					System.out.println("Finally SQL Exception : " + e.getMessage());
+				}
+			}
+
+			return Response.status(201).entity(mainObj.toString()).build();
+
+		}
+
 
 		}
 	
