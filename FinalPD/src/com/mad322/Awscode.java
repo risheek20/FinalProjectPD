@@ -206,6 +206,86 @@ import com.mad322.*;
 	    	
 	    	return Response.status(status).entity(mainObj.toString()).build();
 	    }
-	
+
+		@GET
+		@Path("/getInd/{id}")
+		@Produces(MediaType.APPLICATION_JSON)
+		public Response getInd(@PathParam("id") String id) {
+			MysqlCon connection = new MysqlCon();
+
+			con = connection.getConnection();
+
+			try {
+				stmt = con.createStatement();
+
+				rs = stmt.executeQuery("Select * from individual where CUST_ID ="+id);
+
+				while (rs.next()) {
+					childObj = new JSONObject();
+					childObj.accumulate("BIRTH_DATE", rs.getString("BIRTH_DATE"));
+					childObj.accumulate("FIRST_NAME", rs.getString("FIRST_NAME"));
+					childObj.accumulate("LAST_NAME", rs.getString("LAST_NAME"));
+					childObj.accumulate("CUST_ID", rs.getString("CUST_ID"));
+
+
+					jsonArray.put(childObj);
+				}
+
+				mainObj.put("Individual", jsonArray);
+			} catch (SQLException e) {
+				System.out.println("SQL Exception : " + e.getMessage());
+			} finally {
+				try {
+					con.close();
+					stmt.close();
+					rs.close();
+				} catch (SQLException e) {
+					System.out.println("Finally Block SQL Exception : " + e.getMessage());
+				}
+			}
+
+			return Response.status(200).entity(mainObj.toString()).build();
+
+		}
+		@GET
+		@Path("/getprod/{id}")
+		@Produces(MediaType.APPLICATION_JSON)
+		public Response getprod(@PathParam("id") String id) {
+			MysqlCon connection = new MysqlCon();
+
+			con = connection.getConnection();
+
+			try {
+				stmt = con.createStatement();
+
+				rs = stmt.executeQuery("Select * from product_type where PRODUCT_TYPE_CD ="+id);
+
+				while (rs.next()) {
+					childObj = new JSONObject();
+					childObj.accumulate("PRODUCT_TYPE_CD", rs.getString("PRODUCT_TYPE_CD"));
+					childObj.accumulate("NAME", rs.getString("NAME"));
+
+
+					jsonArray.put(childObj);
+				}
+
+				mainObj.put("product_type", jsonArray);
+			} catch (SQLException e) {
+				System.out.println("SQL Exception : " + e.getMessage());
+			} finally {
+				try {
+					con.close();
+					stmt.close();
+					rs.close();
+				} catch (SQLException e) {
+					System.out.println("Finally Block SQL Exception : " + e.getMessage());
+				}
+			}
+
+			return Response.status(200).entity(mainObj.toString()).build();
+
+		}
+		
+
 		}
 	
