@@ -474,6 +474,151 @@ import com.mad322.*;
 				return Response.status(201).entity(mainObj.toString()).build();
 
 			}
+		@DELETE
+		@Path("/delacc/{id}")
+		@Produces(MediaType.APPLICATION_JSON)
+		public Response selectEmployee(@PathParam("id") String id)
+		{
+			MysqlCon connection= new MysqlCon();
+			con= connection.getConnection();
+			Status status= Status.OK;
+			try
+			{
+				String query="DELETE FROM `midterm`.`account` WHERE `acc_id` = "+id;
+				stmt= con.createStatement();
+				stmt.executeUpdate(query);
+
+				int rowCount = stmt.executeUpdate(query);
+				if (rowCount > 0)
+				{
+					status=Status.OK;
+					mainObj.accumulate("status", status);
+					mainObj.accumulate("Message","Data successfully Deleted !");
+
+				}
+				else
+				{
+					status=Status.NOT_MODIFIED;
+					mainObj.accumulate("status", status);
+					mainObj.accumulate("Message","Something Went Wrong");
+
+				}
+
+			}catch(SQLException e) {
+				e.printStackTrace();
+				status=Status.NOT_MODIFIED;
+				mainObj.accumulate("status", status);
+				mainObj.accumulate("Message","Something Went Wrong");
+			}
+
+			return Response.status(status).entity(mainObj.toString()).build();
+		}
+		POST
+		@Path("/createDe")
+		@Consumes(MediaType.APPLICATION_JSON)
+		@Produces(MediaType.APPLICATION_JSON)
+		public Response createDe(Department De) {
+			MysqlCon connection = new MysqlCon();
+
+			con = connection.getConnection();
+
+			try {
+
+
+
+				String query = "INSERT INTO `midterm`.`department`(`DEPT_ID,Name`)"
+						+ "VALUES(?,?)";
+
+				preparedStatement = con.prepareStatement(query);
+
+
+				preparedStatement.setInt(1,De.getDEPT_ID());
+				preparedStatement.setString(2,De.getNAME());
+
+
+				int rowCount = preparedStatement.executeUpdate();
+
+				if (rowCount > 0) {
+					System.out.println("Record inserted Successfully! : " + rowCount);
+
+					mainObj.accumulate("Status", 201);
+					mainObj.accumulate("Message", "Record Successfully added!");
+				} else {
+					mainObj.accumulate("Status", 500);
+					mainObj.accumulate("Message", "Something went wrong!");
+				}
+
+			} catch (SQLException e) {
+
+				mainObj.accumulate("Status", 500);
+				mainObj.accumulate("Message", e.getMessage());
+			} finally {
+				try {
+					con.close();
+					preparedStatement.close();
+				} catch (SQLException e) {
+					System.out.println("Finally SQL Exception : " + e.getMessage());
+				}
+			}
+
+			return Response.status(201).entity(mainObj.toString()).build();
+
+		}
+		@POST
+		@Path("/createBranch")
+		@Consumes(MediaType.APPLICATION_JSON)
+		@Produces(MediaType.APPLICATION_JSON)
+		public Response createbranch(Branch branch) {
+			MysqlCon connection = new MysqlCon();
+
+			con = connection.getConnection();
+
+			try {
+
+
+
+				String query = "INSERT INTO `midterm`.`branch`(`BRANCH_ID,ADDRESS, CITY,NAME, STATE,ZIP_CODE`)"
+						+ "VALUES(?,?,?,?,?,?)";
+
+				preparedStatement = con.prepareStatement(query);
+
+
+				preparedStatement.setInt(1, branch.getBRANCH_ID());
+				preparedStatement.setString(2, branch.getADDRESS());
+				preparedStatement.setString(3, branch.getCITY());
+				preparedStatement.setString(4, branch.getNAME());
+				preparedStatement.setString(5, branch.getSTATE());
+				preparedStatement.setString(6, branch.getZIP_CODE());
+
+
+				int rowCount = preparedStatement.executeUpdate();
+
+				if (rowCount > 0) {
+					System.out.println("Record inserted Successfully! : " + rowCount);
+
+					mainObj.accumulate("Status", 201);
+					mainObj.accumulate("Message", "Record Successfully added!");
+				} else {
+					mainObj.accumulate("Status", 500);
+					mainObj.accumulate("Message", "Something went wrong!");
+				}
+
+			} catch (SQLException e) {
+
+				mainObj.accumulate("Status", 500);
+				mainObj.accumulate("Message", e.getMessage());
+			} finally {
+				try {
+					con.close();
+					preparedStatement.close();
+				} catch (SQLException e) {
+					System.out.println("Finally SQL Exception : " + e.getMessage());
+				}
+			}
+
+			return Response.status(201).entity(mainObj.toString()).build();
+
+		}
  
 
 
